@@ -64,14 +64,27 @@ app.get("/auth/strava/callback", async (req, res) => {
     const access_token = response.data.access_token;
 
     console.log("==================================");
-console.log("ADDING RIDER:", athlete.firstname, athlete.lastname);
+console.log("ADDING OR UPDATING RIDER:", athlete.firstname, athlete.lastname);
 
-riders.push({
+// Build the rider object
+const riderData = {
   id: athlete.id,
   name: athlete.firstname + " " + athlete.lastname,
   access_token: access_token,
-});
+};
 
+// Check if this rider already exists
+const existingIndex = riders.findIndex((r) => r.id === athlete.id);
+
+if (existingIndex >= 0) {
+  console.log("Updating existing rider...");
+  riders[existingIndex] = riderData;
+} else {
+  console.log("Adding new rider...");
+  riders.push(riderData);
+}
+
+// Save riders.json
 fs.writeJsonSync(RIDERS_FILE, riders, { spaces: 2 });
 
 console.log("Current riders:");
