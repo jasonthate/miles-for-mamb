@@ -16,8 +16,11 @@ app.get("/test", (req, res) => {
 // 🔴 STRAVA CREDENTIALS
 const CLIENT_ID = "262560";
 const CLIENT_SECRET = "a2505d759f9ed5c7be09020adc7ddb3804e9eba1";
-const REDIRECT_URI = "http://localhost:3000/auth/strava/callback";
 
+// Use the Render URL when deployed
+const REDIRECT_URI =
+  process.env.REDIRECT_URI ||
+  "https://miles-for-mamb-jason.onrender.com/auth/strava/callback";
 const RIDERS_FILE = "./riders.json";
 
 let riders = fs.existsSync(RIDERS_FILE)
