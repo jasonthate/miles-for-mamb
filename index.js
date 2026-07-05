@@ -97,9 +97,14 @@ console.log("==================================");
       <a href="/riders">View Riders</a>
     `);
   } catch (err) {
-    console.log(err.response?.data || err.message);
-    res.send("Error connecting to Strava");
-  }
+  console.log("===== STRAVA CALLBACK ERROR =====");
+  console.log("Status:", err.response?.status);
+  console.log("Data:", err.response?.data);
+  console.log("Message:", err.message);
+  console.log("================================");
+
+  res.status(500).send("Error connecting to Strava");
+}
 });
 
 // RIDERS
