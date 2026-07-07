@@ -14,19 +14,60 @@ app.get("/test", (req, res) => {
 });
 
 // 🔴 STRAVA CREDENTIALS
-const CLIENT_ID = "262560";
-const CLIENT_SECRET = "a2505d759f9ed5c7be09020adc7ddb3804e9eba1";
+const CLIENT_ID = process.env.CLIENT_ID || "262560";
+const CLIENT_SECRET =
+  process.env.CLIENT_SECRET ||
+  "ae3294db4e8d07c65977943ffc0a4289a4197db1";
 
 // Use the Render URL when deployed
 const REDIRECT_URI =
   process.env.REDIRECT_URI ||
-  "https://miles-for-mamb-jason.onrender.com/auth/strava/callback";
+  "http://localhost:3000/auth/strava/callback";
 const RIDERS_FILE = "./riders.json";
+
+// Challenge configuration
+const CHALLENGE_YEAR = process.env.CHALLENGE_YEAR || 2026;
+const CHALLENGE_MONTH = process.env.CHALLENGE_MONTH || 7; // 1 = Jan, 8 = Aug
 
 let riders = fs.existsSync(RIDERS_FILE)
   ? fs.readJsonSync(RIDERS_FILE)
   : [];
+// Get a valid Strava access token
+async function getValidAccessToken(rider) {
 
+  // Token still valid?
+  if (
+    rider.expires_at &&
+    rider.expires_at > Math.floor(Date.now() / 1000) + 60
+  ) {
+    return rider.access_token;
+  }
+
+  // No refresh token available
+  if (!rider.refresh_token) {
+    return rider.access_token;
+  }
+
+  console.log(`Refreshing token for ${rider.name}...`);
+
+  const response = await axios.post(
+    "https://www.strava.com/oauth/token",
+    {
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      grant_type: "refresh_token",
+      refresh_token: rider.refresh_token,
+    }
+  );
+
+  rider.access_token = response.data.access_token;
+  rider.refresh_token = response.data.refresh_token;
+  rider.expires_at = response.data.expires_at;
+
+  fs.writeJsonSync(RIDERS_FILE, riders, { spaces: 2 });
+
+  return rider.access_token;
+}
 // HOME
 app.get("/", (req, res) => {
   res.send(`
@@ -60,17 +101,18 @@ app.get("/auth/strava/callback", async (req, res) => {
       }
     );
 
-    const athlete = response.data.athlete;
-    const access_token = response.data.access_token;
+  const athlete = response.data.athlete;
 
-    console.log("==================================");
+console.log("==================================");
 console.log("ADDING OR UPDATING RIDER:", athlete.firstname, athlete.lastname);
 
 // Build the rider object
 const riderData = {
   id: athlete.id,
   name: athlete.firstname + " " + athlete.lastname,
-  access_token: access_token,
+  access_token: response.data.access_token,
+  refresh_token: response.data.refresh_token,
+  expires_at: response.data.expires_at,  
 };
 
 // Check if this rider already exists
@@ -130,14 +172,16 @@ app.get("/activities/:id", async (req, res) => {
   }
 
   try {
-    const response = await axios.get(
-      "https://www.strava.com/api/v3/athlete/activities",
-      {
-        headers: {
-          Authorization: `Bearer ${rider.access_token}`,
-        },
-      }
-    );
+   const token = await getValidAccessToken(rider);
+
+const response = await axios.get(
+  "https://www.strava.com/api/v3/athlete/activities",
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+); 
 
     res.json(response.data);
   } catch (err) {
@@ -164,11 +208,14 @@ app.get("/leaderboard", async (req, res) => {
     for (const rider of riders) {
       console.log("Checking rider:", rider.name);
 
+      // Get a valid access token (refreshes if needed)
+      const token = await getValidAccessToken(rider);
+
       const response = await axios.get(
         "https://www.strava.com/api/v3/athlete/activities?per_page=200",
         {
           headers: {
-            Authorization: `Bearer ${rider.access_token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -180,7 +227,11 @@ app.get("/leaderboard", async (req, res) => {
       for (const a of activities) {
         const date = new Date(a.start_date);
 
-        if (a.type === "Ride" && date.getMonth() === 7) {
+        if (
+          a.type === "Ride" &&
+          date.getFullYear() === Number(CHALLENGE_YEAR) &&
+          date.getMonth() + 1 === Number(CHALLENGE_MONTH)
+        ) {
           totalMeters += a.distance;
         }
       }
