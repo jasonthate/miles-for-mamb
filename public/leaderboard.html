@@ -45,19 +45,55 @@ footer{text-align:center;color:var(--muted);padding:30px}
  #podium{grid-template-columns:1fr}
  h1{font-size:2.2rem}
 }
+.logo{
+    width:170px;
+    margin-bottom:15px;
+}
+
+.challenge{
+    margin:0;
+    color:#7c8f42;
+    font-size:1.3rem;
+    font-weight:600;
+    letter-spacing:1px;
+}
+
+.tag{
+    margin-top:10px;
+    font-size:1.15rem;
+    color:#d8dde3;
+}
+
+.mission{
+    margin-top:18px;
+    max-width:650px;
+    margin-left:auto;
+    margin-right:auto;
+    color:#9aa6b2;
+    line-height:1.6;
+    font-size:1rem;
+}
 </style>
 </head>
 <body>
 <div class="container">
 <header>
-<img src="/images/mamb-logo.png" alt="MAMB Logo">
-<h1>Miles for MAMB</h1>
-<div class="tag">Ride • Raise • Make a Difference</div>
+    <img src="/images/mamb-logo.png" alt="MAMB Logo" class="logo">
+
+    <h1>Miles for MAMB</h1>
+
+    <h2 class="challenge">2026 Cycling Challenge</h2>
+
+    <p class="tag">
+        Ride • Raise • Make a Difference
+    </p>
+
+    <p class="mission">
+        Every mile you ride helps build and maintain MAMB trails.
+    </p>
 </header>
 
-<div class="banner">
-Every mile you ride helps build and maintain MAMB trails.
-</div>
+
 
 <div class="actions">
 <a class="btn primary" href="/auth/strava">Connect with Strava</a>
@@ -70,10 +106,10 @@ Every mile you ride helps build and maintain MAMB trails.
 <div class="card"><div>🏆 Leader</div><div class="value" id="leader">--</div></div>
 </div>
 
-<h2>Top 3 Riders</h2>
+<h2>🏆 Current Leaders</h2>
 <div id="podium"></div>
 
-<h2>Leaderboard</h2>
+<h2>🏅 Full Leaderboard</h2>
 <div id="list" class="table"></div>
 
 <footer>
@@ -96,13 +132,35 @@ async function loadLeaderboard(){
  document.getElementById("lastUpdated").textContent=
    "Last Updated: "+new Date().toLocaleString();
 
- const podiumColors=["gold","silver","bronze"];
- document.getElementById("podium").innerHTML=[0,1,2].map(i=>`
- <div class="podium-card ${podiumColors[i]}">
- <h3>${["🥇","🥈","🥉"][i]}</h3>
- <h3>${data[i]?.name||""}</h3>
- <div style="font-size:2rem;font-weight:bold">${Number(data[i]?.miles||0).toFixed(2)} mi</div>
- </div>`).join("");
+const podium = document.getElementById("podium");
+
+if (data.length === 1) {
+
+  podium.innerHTML = `
+    <div class="podium-card gold" style="grid-column:1 / span 3;">
+      <h3>🥇 First Place</h3>
+      <h2>${data[0].name}</h2>
+      <div style="font-size:2rem;font-weight:bold">
+        ${Number(data[0].miles).toFixed(2)} mi
+      </div>
+    </div>
+  `;
+
+} else {
+
+  const podiumColors = ["gold","silver","bronze"];
+
+  podium.innerHTML = [0,1,2].map(i=>`
+    <div class="podium-card ${podiumColors[i]}">
+      <h3>${["🥇","🥈","🥉"][i]}</h3>
+      <h3>${data[i]?.name || "Waiting for rider..."}</h3>
+      <div style="font-size:2rem;font-weight:bold">
+        ${data[i] ? Number(data[i].miles).toFixed(2) + " mi" : "--"}
+      </div>
+    </div>
+  `).join("");
+
+}
 
  const max=data[0]?.miles||1;
  document.getElementById("list").innerHTML=data.map((r,i)=>{
