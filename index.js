@@ -17,7 +17,7 @@ app.get("/test", (req, res) => {
 const CLIENT_ID = process.env.CLIENT_ID || "262560";
 const CLIENT_SECRET =
   process.env.CLIENT_SECRET ||
-  "ae3294db4e8d07c65977943ffc0a4289a4197db1";
+  "e11f9fc9b6d0b3290bdc3308740e77de846be6b2";
 
 // Use the Render URL when deployed
 const REDIRECT_URI =
