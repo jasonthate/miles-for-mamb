@@ -1,253 +1,123 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Miles for MAMB</title>
-
-  <style>
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;
-      background:#0b0f14;
-      color:#e8edf2;
-    }
-
-    .app{
-      max-width:1000px;
-      margin:40px auto;
-      padding:0 20px;
-    }
-
-    .header{
-      text-align:center;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding-bottom:20px;
-      border-bottom:1px solid rgba(255,255,255,0.06);
-    }
-
-    .title{
-      font-size:48px;
-      font-weight:900;
-      letter-spacing:-1px;
-      margin-bottom:6px;
-    }
-
-    .subtitle{
-      font-size:12px;
-      color:#8b97a3;
-      letter-spacing:2px;
-      text-transform:uppercase;
-    }
-
-    .status{
-      font-size:12px;
-      color:#22c55e;
-      margin-top:8px;
-    }
-
-    #lastUpdated{
-      margin-top:8px;
-      font-size:12px;
-      color:#8b97a3;
-    }
-
-    button{
-      margin-top:12px;
-      padding:8px 16px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,0.12);
-      background:#111827;
-      color:white;
-      cursor:pointer;
-      font-weight:600;
-    }
-
-    button:hover{
-      background:#1f2937;
-    }
-
-    .podium{
-      display:flex;
-      justify-content:center;
-      align-items:flex-end;
-      gap:14px;
-      margin-top:30px;
-      flex-wrap:wrap;
-    }
-
-    .card{
-      background:#111827;
-      border:1px solid rgba(255,255,255,0.06);
-      border-radius:14px;
-      padding:16px;
-      width:200px;
-      text-align:center;
-      transition:.2s;
-    }
-
-    .card:hover{
-      transform:translateY(-3px);
-      border-color:#38bdf8;
-    }
-
-    .gold{
-      width:240px;
-      border:2px solid #38bdf8;
-      box-shadow:0 0 25px rgba(56,189,248,.15);
-    }
-
-    .medal{
-      font-size:16px;
-      margin-bottom:8px;
-    }
-
-    .name{
-      font-size:15px;
-      font-weight:600;
-    }
-
-    .miles{
-      font-size:34px;
-      font-weight:900;
-      color:#38bdf8;
-      margin-top:6px;
-    }
-
-    .label{
-      font-size:11px;
-      color:#6b7280;
-    }
-
-    .table{
-      margin-top:30px;
-    }
-
-    .row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:14px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-
-    .row:hover{
-      background:rgba(56,189,248,.05);
-    }
-
-    .left{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-
-    .bar{
-      width:280px;
-      height:4px;
-      background:#1f2937;
-      border-radius:999px;
-      overflow:hidden;
-    }
-
-    .fill{
-      height:100%;
-      background:#38bdf8;
-      transition:width .5s ease;
-    }
-
-    .right{
-      font-weight:700;
-    }
-
-    @media (max-width:700px){
-      .bar{
-        width:180px;
-      }
-
-      .title{
-        font-size:36px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miles for MAMB</title>
+<style>
+:root{
+ --bg:#0b0f14;
+ --panel:#151c24;
+ --accent:#7c8f42;
+ --accent2:#4fa3d9;
+ --text:#eef2f5;
+ --muted:#9aa6b2;
+ --gold:#d4af37;
+ --silver:#c0c0c0;
+ --bronze:#b87333;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:linear-gradient(#0b0f14,#111922);color:var(--text)}
+.container{max-width:1100px;margin:auto;padding:24px}
+header{text-align:center;padding:20px 0 30px}
+header img{max-width:180px}
+h1{font-size:3rem;margin:.5rem 0}
+.tag{color:var(--muted);font-size:1.1rem}
+.banner{margin:24px auto;padding:18px;background:var(--panel);border-left:5px solid var(--accent);border-radius:12px;text-align:center}
+.actions{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin:24px 0}
+.btn{padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:700;border:none;cursor:pointer}
+.primary{background:var(--accent);color:white}
+.secondary{background:#28313b;color:white}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;margin:28px 0}
+.card{background:var(--panel);padding:20px;border-radius:14px;text-align:center}
+.card .value{font-size:2rem;font-weight:bold;margin-top:8px}
+#podium{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:30px 0}
+.podium-card{background:var(--panel);padding:20px;border-radius:14px;text-align:center}
+.gold{border-top:6px solid var(--gold)}
+.silver{border-top:6px solid var(--silver)}
+.bronze{border-top:6px solid var(--bronze)}
+.table .row{display:flex;justify-content:space-between;align-items:center;background:var(--panel);padding:12px 16px;border-radius:10px;margin-bottom:10px}
+.left{flex:1}
+.bar{height:8px;background:#29313b;border-radius:10px;overflow:hidden;margin-top:8px}
+.fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+footer{text-align:center;color:var(--muted);padding:30px}
+@media(max-width:700px){
+ #podium{grid-template-columns:1fr}
+ h1{font-size:2.2rem}
+}
+</style>
 </head>
-
 <body>
+<div class="container">
+<header>
+<img src="/images/mamb-logo.png" alt="MAMB Logo">
+<h1>Miles for MAMB</h1>
+<div class="tag">Ride • Raise • Make a Difference</div>
+</header>
 
-<div class="app">
+<div class="banner">
+Every mile you ride helps build and maintain MAMB trails.
+</div>
 
-  <div class="header">
-    <div class="title">🚴 Miles for MAMB</div>
-    <div class="subtitle">Live Strava Cycling Leaderboard</div>
-    <div class="status">🟢 LIVE • AUTO UPDATING</div>
-    <div id="lastUpdated">Last Updated: --</div>
-    <button onclick="loadLeaderboard()">Refresh</button>
-  </div>
+<div class="actions">
+<a class="btn primary" href="/auth/strava">Connect with Strava</a>
+<button class="btn secondary" onclick="loadLeaderboard()">Refresh Leaderboard</button>
+</div>
 
-  <div id="podium" class="podium"></div>
+<div class="stats">
+<div class="card"><div>👥 Riders</div><div class="value" id="riders">0</div></div>
+<div class="card"><div>🚴 Total Miles</div><div class="value" id="totalMiles">0</div></div>
+<div class="card"><div>🏆 Leader</div><div class="value" id="leader">--</div></div>
+</div>
 
-  <div id="list" class="table"></div>
+<h2>Top 3 Riders</h2>
+<div id="podium"></div>
 
+<h2>Leaderboard</h2>
+<div id="list" class="table"></div>
+
+<footer>
+<div id="lastUpdated">Last Updated: --</div>
+<div>Powered by Strava</div>
+</footer>
 </div>
 
 <script>
 async function loadLeaderboard(){
+ const res=await fetch("/leaderboard");
+ const data=await res.json();
+ data.sort((a,b)=>b.miles-a.miles);
 
-  const res = await fetch("/leaderboard");
-  const data = await res.json();
+ document.getElementById("riders").textContent=data.length;
+ document.getElementById("leader").textContent=data[0]?.name||"--";
+ document.getElementById("totalMiles").textContent=
+   data.reduce((t,r)=>t+Number(r.miles),0).toFixed(2);
 
-  document.getElementById("lastUpdated").textContent =
-    "Last Updated: " + new Date().toLocaleString();
+ document.getElementById("lastUpdated").textContent=
+   "Last Updated: "+new Date().toLocaleString();
 
-  data.sort((a,b)=>b.miles-a.miles);
+ const podiumColors=["gold","silver","bronze"];
+ document.getElementById("podium").innerHTML=[0,1,2].map(i=>`
+ <div class="podium-card ${podiumColors[i]}">
+ <h3>${["🥇","🥈","🥉"][i]}</h3>
+ <h3>${data[i]?.name||""}</h3>
+ <div style="font-size:2rem;font-weight:bold">${Number(data[i]?.miles||0).toFixed(2)} mi</div>
+ </div>`).join("");
 
-  const max = data.length ? data[0].miles : 1;
-
-  document.getElementById("podium").innerHTML = `
-    <div class="card">
-      <div class="medal">🥈 2nd</div>
-      <div class="name">${data[1]?.name || ""}</div>
-      <div class="miles">${data[1]?.miles ?? 0}</div>
-      <div class="label">miles</div>
-    </div>
-
-    <div class="card gold">
-      <div class="medal">🥇 1st</div>
-      <div class="name">${data[0]?.name || ""}</div>
-      <div class="miles">${data[0]?.miles ?? 0}</div>
-      <div class="label">miles</div>
-    </div>
-
-    <div class="card">
-      <div class="medal">🥉 3rd</div>
-      <div class="name">${data[2]?.name || ""}</div>
-      <div class="miles">${data[2]?.miles ?? 0}</div>
-      <div class="label">miles</div>
-    </div>
-  `;
-
-  document.getElementById("list").innerHTML =
-    data.map((r,i)=>{
-
-      const pct = max > 0 ? (r.miles / max) * 100 : 0;
-
-      return `
-        <div class="row">
-          <div class="left">
-            <div><b>#${i+1} ${r.name}</b></div>
-            <div class="bar">
-              <div class="fill" style="width:${pct}%"></div>
-            </div>
-          </div>
-          <div class="right">${r.miles}</div>
-        </div>
-      `;
-    }).join("");
+ const max=data[0]?.miles||1;
+ document.getElementById("list").innerHTML=data.map((r,i)=>{
+   const pct=(r.miles/max)*100;
+   return `<div class="row">
+   <div class="left">
+   <strong>#${i+1} ${r.name}</strong>
+   <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+   </div>
+   <div><strong>${Number(r.miles).toFixed(2)} mi</strong></div>
+   </div>`;
+ }).join("");
 }
-
 loadLeaderboard();
-
 setInterval(loadLeaderboard,30000);
 </script>
-
 </body>
 </html>
