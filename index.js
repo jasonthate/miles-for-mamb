@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import axios from "axios";
 import fs from "fs-extra";
+import path from "path";
 
 const app = express();
 app.use(cors());
@@ -68,12 +69,11 @@ async function getValidAccessToken(rider) {
 
   return rider.access_token;
 }
+
+
 // HOME
 app.get("/", (req, res) => {
-  res.send(`
-    <h1>Miles for MAMB 🚴</h1>
-    <a href="/auth/strava">Connect with Strava</a>
-  `);
+  res.sendFile(path.resolve("public", "leaderboard.html"));
 });
 
 // STEP 1
@@ -133,11 +133,14 @@ console.log("Current riders:");
 console.log(riders);
 console.log("==================================");
 
-    res.send(`
-      <h2>Connected Successfully 🚴</h2>
-      <p>Welcome ${athlete.firstname}</p>
-      <a href="/riders">View Riders</a>
-    `);
+ res.send(`
+  <h2>Connected Successfully 🚴</h2>
+  <p>Welcome ${athlete.firstname}</p>
+
+  <p><a href="/leaderboard">View Leaderboard (JSON)</a></p>
+  <p><a href="/">Back to Home</a></p>
+  <p><a href="/riders">View Riders</a></p>
+`);   
   } catch (err) {
   console.log("===== STRAVA CALLBACK ERROR =====");
   console.log("Status:", err.response?.status);
@@ -189,7 +192,7 @@ const response = await axios.get(
   }
 });
 // TEST FILE ROUTE (DEBUG ONLY)
-import path from "path";
+
 
 app.get("/test-file", (req, res) => {
   res.sendFile(path.resolve("./public/leaderboard.html"));
