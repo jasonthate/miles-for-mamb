@@ -133,14 +133,7 @@ console.log("Current riders:");
 console.log(riders);
 console.log("==================================");
 
- res.send(`
-  <h2>Connected Successfully 🚴</h2>
-  <p>Welcome ${athlete.firstname}</p>
-
-  <p><a href="/leaderboard">View Leaderboard (JSON)</a></p>
-  <p><a href="/">Back to Home</a></p>
-  <p><a href="/riders">View Riders</a></p>
-`);   
+res.redirect("/?connected=1");
   } catch (err) {
   console.log("===== STRAVA CALLBACK ERROR =====");
   console.log("Status:", err.response?.status);

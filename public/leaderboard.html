@@ -42,8 +42,49 @@ h1{font-size:3rem;margin:.5rem 0}
 .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 footer{text-align:center;color:var(--muted);padding:30px}
 @media(max-width:700px){
- #podium{grid-template-columns:1fr}
- h1{font-size:2.2rem}
+
+  h1{
+    font-size:2.2rem;
+  }
+
+  #podium{
+    grid-template-columns:1fr;
+  }
+
+  .actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+.actions{
+    flex-direction:column;
+    gap:12px;
+}
+
+.btn{
+    width:100%;
+}
+
+.stats{
+    grid-template-columns:1fr;
+}
+
+.container{
+    padding:16px;
+}
+
+  .btn{
+    width:100%;
+    text-align:center;
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .container{
+    padding:16px;
+  }
+
 }
 .logo{
     width:170px;
@@ -76,6 +117,17 @@ footer{text-align:center;color:var(--muted);padding:30px}
 </style>
 </head>
 <body>
+
+<div id="welcomeBanner" style="
+display:none;
+background:#2e7d32;
+color:white;
+padding:14px;
+text-align:center;
+font-weight:bold;
+">
+✅ Connected! Ride on! 🚴
+</div>
 <div class="container">
 <header>
     <img src="/images/mamb-logo.png" alt="MAMB Logo" class="logo">
@@ -85,21 +137,29 @@ footer{text-align:center;color:var(--muted);padding:30px}
     <h2 class="challenge">2026 Cycling Challenge</h2>
 
     <p class="tag">
-        Ride • Raise • Make a Difference
+        Ride the trails you love. Every mile helps build the next one.
     </p>
 
-    <p class="mission">
-        Every mile you ride helps build and maintain MAMB trails.
-    </p>
+    
 </header>
 
 
 
 <div class="actions">
-<a class="btn primary" href="/auth/strava">Connect with Strava</a>
-<button class="btn secondary" onclick="loadLeaderboard()">Refresh Leaderboard</button>
+    <a class="btn primary" href="/auth/strava" id="connectBtn">
+        🚴 Join the Challenge
+    </a>
 </div>
 
+<p id="connectHelp"
+   style="text-align:center;color:#9aa6b2;margin-top:-10px;margin-bottom:28px;">
+    One-time Strava connection. Your rides update automatically.
+</p>
+
+<p id="connectHelp"
+   style="text-align:center;color:#9aa6b2;margin-top:-10px;margin-bottom:28px;">
+    You're done, now go ride your bike.
+</p>
 <div class="stats">
 <div class="card"><div>👥 Riders</div><div class="value" id="riders">0</div></div>
 <div class="card"><div>🚴 Total Miles</div><div class="value" id="totalMiles">0</div></div>
@@ -176,6 +236,30 @@ if (data.length === 1) {
 }
 loadLeaderboard();
 setInterval(loadLeaderboard,30000);
+const params = new URLSearchParams(window.location.search);
+
+if (params.get("connected") === "1") {
+
+  const banner = document.getElementById("welcomeBanner");
+const help = document.getElementById("connectHelp");
+const btn = document.getElementById("connectBtn");
+
+banner.style.display = "block";
+
+help.innerHTML =
+  "✅ You're all set! You only need to connect your Strava account once.";
+
+btn.innerHTML = "✅ You're All Set!";
+btn.style.pointerEvents = "none";
+btn.style.opacity = "0.75";
+
+history.replaceState({}, "", "/");
+
+setTimeout(() => {
+  banner.style.display = "none";
+}, 5000);
+
+}
 </script>
 </body>
 </html>
